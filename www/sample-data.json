@@ -1,0 +1,82 @@
+[
+  {
+    "id": 1730510000000,
+    "name": "BOJ 1000 A+B",
+    "url": "https://www.acmicpc.net/problem/1000",
+    "tags": ["기초", "구현", "수학"],
+    "memo": "단순 입출력 문제. Scanner나 BufferedReader 사용법 익히기.",
+    "level": "EASY",
+    "created_at": "2025-10-25",
+    "next_review_at": "2025-11-24"
+  },
+  {
+    "id": 1730520000000,
+    "name": "BOJ 1920 수 찾기",
+    "url": "https://www.acmicpc.net/problem/1920",
+    "tags": ["이분탐색", "정렬"],
+    "memo": "배열을 정렬한 후 이분 탐색으로 O(log N) 시간에 찾기. Collections.binarySearch() 활용 가능.",
+    "level": "GOOD",
+    "created_at": "2025-10-28",
+    "next_review_at": "2025-11-04"
+  },
+  {
+    "id": 1730530000000,
+    "name": "BOJ 1463 1로 만들기",
+    "url": "https://www.acmicpc.net/problem/1463",
+    "tags": ["DP", "동적계획법"],
+    "memo": "Bottom-up 방식으로 dp[i] = i를 1로 만드는 최소 연산 횟수. 3가지 경우 중 최솟값 선택.",
+    "level": "HARD",
+    "created_at": "2025-10-30",
+    "next_review_at": "2025-11-02"
+  },
+  {
+    "id": 1730540000000,
+    "name": "BOJ 2178 미로 탐색",
+    "url": "https://www.acmicpc.net/problem/2178",
+    "tags": ["BFS", "그래프"],
+    "memo": "최단 경로 찾기는 BFS! Queue 사용하고 방문 체크 필수. 거리 배열로 경로 길이 저장.",
+    "level": "AGAIN",
+    "created_at": "2025-11-01",
+    "next_review_at": "2025-11-02"
+  },
+  {
+    "id": 1730550000000,
+    "name": "BOJ 11399 ATM",
+    "url": "https://www.acmicpc.net/problem/11399",
+    "tags": ["그리디", "정렬"],
+    "memo": "시간이 적게 걸리는 사람부터 처리하면 전체 대기 시간 최소화. 정렬 후 누적합 계산.",
+    "level": "GOOD",
+    "created_at": "2025-10-29",
+    "next_review_at": "2025-11-05"
+  },
+  {
+    "id": 1730560000000,
+    "name": "BOJ 1931 회의실 배정",
+    "url": "https://www.acmicpc.net/problem/1931",
+    "tags": ["그리디", "정렬"],
+    "memo": "끝나는 시간 기준 정렬이 핵심! 끝나는 시간이 같으면 시작 시간 빠른 순으로 정렬.",
+    "level": "HARD",
+    "created_at": "2025-10-31",
+    "next_review_at": "2025-11-03"
+  },
+  {
+    "id": 1730570000000,
+    "name": "BOJ 2606 바이러스",
+    "url": "https://www.acmicpc.net/problem/2606",
+    "tags": ["DFS", "BFS", "그래프"],
+    "memo": "1번 컴퓨터와 연결된 모든 컴퓨터 찾기. DFS 또는 BFS 둘 다 가능. 인접 리스트로 그래프 구현.",
+    "level": "GOOD",
+    "created_at": "2025-10-27",
+    "next_review_at": "2025-11-03"
+  },
+  {
+    "id": 1730580000000,
+    "name": "BOJ 11047 동전 0",
+    "url": "https://www.acmicpc.net/problem/11047",
+    "tags": ["그리디"],
+    "memo": "큰 동전부터 사용하는 그리디. 동전 가치가 배수 관계라서 그리디가 최적해 보장.",
+    "level": "EASY",
+    "created_at": "2025-10-26",
+    "next_review_at": "2025-11-25"
+  }
+]

@@ -1,0 +1,140 @@
+name: Deploy to GitHub Pages
+
+on:
+  push:
+    branches:
+      - master
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: "pages"
+  cancel-in-progress: false
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # ============================================
+      # Rust 환경 설정
+      # ============================================
+      - name: Setup Rust
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: wasm32-unknown-unknown
+
+      # ============================================
+      # Rust 의존성 캐싱 (매우 효과적!)
+      # ============================================
+      - name: Cache Rust dependencies
+        uses: Swatinem/rust-cache@v2
+        with:
+          cache-on-failure: true
+          # 캐시 키에 Cargo.toml 해시 포함
+          key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
+
+      # ============================================
+      # wasm-pack 바이너리 캐싱
+      # ============================================
+      - name: Cache wasm-pack
+        id: cache-wasm-pack
+        uses: actions/cache@v4
+        with:
+          path: ~/.cargo/bin/wasm-pack
+          key: ${{ runner.os }}-wasm-pack-${{ hashFiles('~/.cargo/bin/wasm-pack') }}
+
+      - name: Install wasm-pack
+        if: steps.cache-wasm-pack.outputs.cache-hit != 'true'
+        run: cargo install wasm-pack --locked
+
+      # ============================================
+      # Rust 소스 변경 감지
+      # ============================================
+      - name: Check for Rust source changes
+        id: rust-changes
+        run: |
+          if git diff --quiet HEAD^ HEAD -- src/ Cargo.toml Cargo.lock 2>/dev/null; then
+            echo "changed=false" >> $GITHUB_OUTPUT
+          else
+            echo "changed=true" >> $GITHUB_OUTPUT
+          fi
+        continue-on-error: true
+
+      # ============================================
+      # WASM 빌드 결과물 캐싱
+      # ============================================
+      - name: Cache WASM build
+        id: cache-wasm-build
+        uses: actions/cache@v4
+        with:
+          path: |
+            pkg/
+            www/wasm/
+          key: ${{ runner.os }}-wasm-${{ hashFiles('src/**', 'Cargo.toml', 'Cargo.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-wasm-
+
+      # ============================================
+      # WASM 빌드 (캐시 미스 또는 소스 변경 시)
+      # ============================================
+      - name: Build WASM
+        if: steps.cache-wasm-build.outputs.cache-hit != 'true' || steps.rust-changes.outputs.changed == 'true'
+        run: |
+          echo "🦀 Building WASM..."
+          wasm-pack build --target web --release
+
+      # ============================================
+      # WASM 파일을 www/wasm으로 복사
+      # ============================================
+      - name: Copy WASM files to www
+        run: |
+          echo "📦 Copying WASM files..."
+          rm -rf www/wasm
+          mkdir -p www/wasm
+          cp pkg/* www/wasm/
+          ls -lh www/wasm/
+
+      # ============================================
+      # 배포 파일 준비 (www 디렉토리만)
+      # ============================================
+      - name: Prepare deployment files
+        run: |
+          echo "📂 Preparing deployment..."
+          # www 디렉토리만 배포하도록 준비
+          mkdir -p _site
+          cp -r www/* _site/
+          ls -la _site/
+
+      # ============================================
+      # GitHub Pages 설정 및 업로드
+      # ============================================
+      - name: Setup Pages
+        uses: actions/configure-pages@v4
+
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: '_site'
+
+      # ============================================
+      # 배포
+      # ============================================
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
+
+      # ============================================
+      # 배포 완료 메시지
+      # ============================================
+      - name: Display deployment URL
+        run: |
+          echo "🚀 Deployment successful!"
+          echo "📍 URL: ${{ steps.deployment.outputs.page_url }}"

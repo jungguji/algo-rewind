@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Algo-Rewind - 알고리즘 복습 도우미</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div id="app">
+        <header>
+            <h1>📚 Algo-Rewind</h1>
+            <p class="subtitle">알고리즘 문제 복습 관리</p>
+        </header>
+
+        <div id="loading" class="loading">
+            <p>⚙️ WASM 모듈 로딩 중...</p>
+        </div>
+
+        <div id="main-content" style="display: none;">
+            <!-- Data Management Section -->
+            <section class="data-controls">
+                <button id="import-btn" class="btn btn-primary">📂 데이터 불러오기</button>
+                <input type="file" id="import-file" accept=".json" style="display: none;">
+                <button id="export-btn" class="btn btn-success">💾 데이터 저장하기</button>
+            </section>
+
+            <!-- Add Problem Form -->
+            <section class="add-problem-section" aria-labelledby="add-problem-title">
+                <h2 id="add-problem-title">➕ 새 문제 등록</h2>
+                <form id="add-problem-form" aria-label="새 문제 등록 폼">
+                    <div class="form-group">
+                        <label for="problem-name">문제 이름/번호 *</label>
+                        <input type="text" id="problem-name" required placeholder="예: BOJ 1000 A+B" aria-required="true">
+                    </div>
+                    <div class="form-group">
+                        <label for="problem-url">문제 링크</label>
+                        <input type="url" id="problem-url" placeholder="https://..." aria-label="문제 링크 URL">
+                    </div>
+                    <div class="form-group">
+                        <label for="problem-tags">태그 (쉼표로 구분)</label>
+                        <input type="text" id="problem-tags" placeholder="예: 기초, 구현, DP" aria-label="문제 태그 (쉼표로 구분)">
+                    </div>
+                    <div class="form-group">
+                        <label for="problem-memo">핵심 메모</label>
+                        <textarea id="problem-memo" rows="3" placeholder="문제 해결의 핵심 아이디어나 실수했던 점을 기록하세요" aria-label="핵심 메모"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="problem-level">나의 이해도 *</label>
+                        <select id="problem-level" required aria-required="true">
+                            <option value="AGAIN">AGAIN (1일 후)</option>
+                            <option value="HARD">HARD (3일 후)</option>
+                            <option value="GOOD" selected>GOOD (7일 후)</option>
+                            <option value="EASY">EASY (30일 후)</option>
+                        </select>
+                    </div>
+                    <button type="submit" class="btn btn-primary">등록하기</button>
+                </form>
+            </section>
+
+            <!-- Review Dashboard -->
+            <section class="review-section">
+                <h2>🔔 오늘 복습할 문제</h2>
+                <div id="today-reviews" class="problem-list">
+                    <p class="empty-message">복습할 문제가 없습니다!</p>
+                </div>
+            </section>
+
+            <!-- All Problems List -->
+            <section class="all-problems-section">
+                <h2>📚 전체 문제 목록</h2>
+                <div class="list-controls">
+                    <input type="text" id="search-input" placeholder="문제 이름이나 태그로 검색...">
+                    <select id="sort-select">
+                        <option value="next_review">다음 복습일 순</option>
+                        <option value="created_at">최신 등록 순</option>
+                        <option value="name">이름 순</option>
+                    </select>
+                </div>
+                <div id="all-problems" class="problem-list">
+                    <p class="empty-message">등록된 문제가 없습니다. 위에서 새 문제를 등록해보세요!</p>
+                </div>
+            </section>
+        </div>
+    </div>
+
+    <!-- Review Modal -->
+    <div id="review-modal" class="modal" role="dialog" aria-modal="true" aria-labelledby="modal-title" aria-hidden="true">
+        <div class="modal-content">
+            <h3 id="modal-title">복습 완료</h3>
+            <p id="modal-problem-name"></p>
+            <p>이번에는 얼마나 잘 이해했나요?</p>
+            <div class="modal-buttons" role="group" aria-label="이해도 선택">
+                <button class="btn btn-danger" data-level="AGAIN" aria-label="다시 - 1일 후 복습">AGAIN (1일 후)</button>
+                <button class="btn btn-warning" data-level="HARD" aria-label="어려움 - 3일 후 복습">HARD (3일 후)</button>
+                <button class="btn btn-info" data-level="GOOD" aria-label="좋음 - 7일 후 복습">GOOD (7일 후)</button>
+                <button class="btn btn-success" data-level="EASY" aria-label="쉬움 - 30일 후 복습">EASY (30일 후)</button>
+            </div>
+            <button id="modal-close" class="btn btn-secondary" aria-label="모달 닫기">취소</button>
+        </div>
+    </div>
+
+    <!-- Toast Notification -->
+    <div id="toast" class="toast"></div>
+
+    <script type="module" src="app.js"></script>
+</body>
+</html>
