@@ -289,6 +289,22 @@ function renderAllProblems() {
     });
 }
 
+// Render markdown memo
+function renderMarkdownMemo(memo) {
+    if (!memo) return '메모가 없습니다.';
+
+    // Use marked.js if available, otherwise fallback to plain text
+    if (typeof marked !== 'undefined') {
+        try {
+            return marked.parse(memo);
+        } catch (error) {
+            console.error('Markdown parsing error:', error);
+            return escapeHtml(memo);
+        }
+    }
+    return escapeHtml(memo);
+}
+
 // Create problem card HTML
 function createProblemCard(problem, isReview) {
     const toggleId = isReview ? `data-toggle-id="${problem.id}"` : `data-toggle-all-id="${problem.id}"`;
@@ -306,7 +322,7 @@ function createProblemCard(problem, isReview) {
                 </div>
             ` : ''}
             <div class="problem-memo" id="${memoId}">
-                ${escapeHtml(problem.memo) || '메모가 없습니다.'}
+                ${renderMarkdownMemo(problem.memo)}
             </div>
             <div class="problem-info">
                 등록일: ${problem.created_at} | 다음 복습: ${problem.next_review_at} | 이해도: ${problem.level}

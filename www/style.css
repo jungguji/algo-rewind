@@ -211,10 +211,98 @@ section h2 {
     border-left: 3px solid #f39c12;
     border-radius: 4px;
     display: none;
+    word-wrap: break-word;
+    line-height: 1.6;
 }
 
 .problem-memo.show {
     display: block;
+}
+
+/* Markdown styles within memo */
+.problem-memo h1 {
+    font-size: 1.5em;
+    margin-top: 0.5em;
+    margin-bottom: 0.5em;
+    color: #2c3e50;
+}
+
+.problem-memo h2 {
+    font-size: 1.3em;
+    margin-top: 0.5em;
+    margin-bottom: 0.5em;
+    color: #2c3e50;
+}
+
+.problem-memo h3 {
+    font-size: 1.1em;
+    margin-top: 0.5em;
+    margin-bottom: 0.5em;
+    color: #2c3e50;
+}
+
+.problem-memo p {
+    margin: 0.5em 0;
+}
+
+.problem-memo ul,
+.problem-memo ol {
+    margin: 0.5em 0;
+    padding-left: 2em;
+}
+
+.problem-memo li {
+    margin: 0.25em 0;
+}
+
+.problem-memo strong {
+    font-weight: 700;
+    color: #c0392b;
+}
+
+.problem-memo em {
+    font-style: italic;
+    color: #16a085;
+}
+
+.problem-memo code {
+    background-color: #f4f4f4;
+    padding: 2px 6px;
+    border-radius: 3px;
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 0.9em;
+    color: #e74c3c;
+}
+
+.problem-memo pre {
+    background-color: #f4f4f4;
+    padding: 10px;
+    border-radius: 5px;
+    overflow-x: auto;
+    margin: 0.5em 0;
+}
+
+.problem-memo pre code {
+    background-color: transparent;
+    padding: 0;
+    color: #333;
+}
+
+.problem-memo blockquote {
+    border-left: 3px solid #bdc3c7;
+    margin: 0.5em 0;
+    padding-left: 1em;
+    color: #7f8c8d;
+    font-style: italic;
+}
+
+.problem-memo a {
+    color: #3498db;
+    text-decoration: none;
+}
+
+.problem-memo a:hover {
+    text-decoration: underline;
 }
 
 .problem-info {
