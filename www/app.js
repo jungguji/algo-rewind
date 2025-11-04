@@ -2,6 +2,44 @@
 let currentProblems = [];
 let wasm = null;
 
+// LocalStorage key
+const STORAGE_KEY = 'algo-rewind-problems';
+
+// LocalStorage utility functions
+function saveToLocalStorage() {
+    try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(currentProblems));
+        console.log('Data auto-saved to localStorage');
+    } catch (error) {
+        console.error('LocalStorage save error:', error);
+        showToast('자동 저장 실패: ' + error.message, 'error');
+    }
+}
+
+function loadFromLocalStorage() {
+    try {
+        const data = localStorage.getItem(STORAGE_KEY);
+        if (data) {
+            return JSON.parse(data);
+        }
+        return [];
+    } catch (error) {
+        console.error('LocalStorage load error:', error);
+        showToast('저장된 데이터 불러오기 실패: ' + error.message, 'error');
+        return [];
+    }
+}
+
+function clearLocalStorage() {
+    try {
+        localStorage.removeItem(STORAGE_KEY);
+        console.log('LocalStorage cleared');
+    } catch (error) {
+        console.error('LocalStorage clear error:', error);
+        showToast('데이터 초기화 실패: ' + error.message, 'error');
+    }
+}
+
 // Initialize WASM and application
 async function init() {
     try {
@@ -24,6 +62,14 @@ async function init() {
         // Setup event listeners
         setupEventListeners();
 
+        // Auto-load data from localStorage
+        const savedData = loadFromLocalStorage();
+        if (savedData.length > 0) {
+            currentProblems = savedData;
+            renderProblems();
+            showToast(`저장된 데이터를 자동으로 불러왔습니다. (문제 ${savedData.length}개)`);
+        }
+
     } catch (error) {
         console.error('Initialization error:', error);
         document.getElementById('loading').innerHTML =
@@ -34,13 +80,14 @@ async function init() {
 
 // Setup all event listeners
 function setupEventListeners() {
-    // Import/Export buttons
+    // Import/Export/Clear buttons
     document.getElementById('import-btn').addEventListener('click', () => {
         document.getElementById('import-file').click();
     });
 
     document.getElementById('import-file').addEventListener('change', handleImport);
     document.getElementById('export-btn').addEventListener('click', handleExport);
+    document.getElementById('clear-btn').addEventListener('click', handleClearData);
 
     // Add problem form
     document.getElementById('add-problem-form').addEventListener('submit', handleAddProblem);
@@ -89,6 +136,7 @@ function handleImport(event) {
         try {
             const data = JSON.parse(e.target.result);
             currentProblems = data;
+            saveToLocalStorage(); // Auto-save imported data
             renderProblems();
             showToast('데이터를 성공적으로 불러왔습니다!');
         } catch (error) {
@@ -113,7 +161,28 @@ function handleExport() {
     a.href = URL.createObjectURL(blob);
     a.download = 'algo-rewind.json';
     a.click();
-    showToast('데이터를 저장했습니다!');
+    showToast('백업 파일로 내보냈습니다!');
+}
+
+// Handle data clear
+function handleClearData() {
+    if (currentProblems.length === 0) {
+        showToast('삭제할 데이터가 없습니다.', 'warning');
+        return;
+    }
+
+    const confirmed = confirm(
+        `정말로 모든 데이터를 삭제하시겠습니까?\n\n` +
+        `현재 ${currentProblems.length}개의 문제가 저장되어 있습니다.\n` +
+        `이 작업은 되돌릴 수 없습니다.`
+    );
+
+    if (confirmed) {
+        currentProblems = [];
+        clearLocalStorage();
+        renderProblems();
+        showToast('모든 데이터가 삭제되었습니다.', 'warning');
+    }
 }
 
 // Handle adding new problem
@@ -138,6 +207,7 @@ async function handleAddProblem(event) {
         const problem = JSON.parse(problemJson);
 
         currentProblems.push(problem);
+        saveToLocalStorage(); // Auto-save
         renderProblems();
 
         // Reset form
@@ -309,6 +379,7 @@ async function handleReviewComplete(newLevel) {
             currentProblems[index] = updatedProblem;
         }
 
+        saveToLocalStorage(); // Auto-save
         renderProblems();
         closeModal();
         showToast('복습을 완료했습니다!');
